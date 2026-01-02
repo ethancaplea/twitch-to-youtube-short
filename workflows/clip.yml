@@ -1,0 +1,31 @@
+name: Twitch Clip to YouTube Shorts
+
+on:
+  workflow_dispatch:
+    inputs:
+      streamer:
+        description: "Twitch streamer username"
+        required: true
+        default: ""
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          pip install yt-dlp requests
+
+      - name: Placeholder
+        run: echo "Workflow skeleton is ready"
