@@ -36,7 +36,7 @@ jobs:
           python scripts/get_clip.py "${{ github.event.inputs.streamer }}"
 
       - name: Upload clip as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: twitch-clip
           path: "*.mp4"
