@@ -27,5 +27,15 @@ jobs:
           sudo apt-get install -y ffmpeg
           pip install yt-dlp requests
 
-      - name: Placeholder
-        run: echo "Workflow skeleton is ready"
+      - name: Run get_clip script
+        run: |
+          python scripts/get_clip.py "${{ github.event.inputs.streamer }}"
+
+
+
+
+
+
+
+
+        
