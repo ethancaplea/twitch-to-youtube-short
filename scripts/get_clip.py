@@ -69,6 +69,21 @@ print(f"Title: {top_clip['title']}")
 print(f"Views: {top_clip['view_count']}")
 print(f"URL: {top_clip['url']}")
 
+# --- Download clip ---
+output_file = f"{top_clip['id']}.mp4"
 
+print(f"Downloading clip to {output_file}...")
+
+import subprocess
+
+# Use yt-dlp to download the Twitch clip MP4
+subprocess.run([
+    "yt-dlp",
+    "-f", "best",
+    "-o", output_file,
+    top_clip["url"]
+], check=True)
+
+print("Download complete.")
 
 
