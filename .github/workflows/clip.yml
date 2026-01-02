@@ -1,15 +1,15 @@
-name: Twitch Clip to YouTube Shorts
+name: Twitch Clip Finder
 
 on:
   workflow_dispatch:
     inputs:
       streamer:
-        description: "Twitch streamer username"
+        description: "Twitch streamer username (lowercase)"
         required: true
-        default: ""
+        default: "ibai"
 
 jobs:
-  build:
+  find-clip:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,23 +19,19 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
-          pip install yt-dlp requests
+          python -m pip install --upgrade pip
+          pip install requests
 
       - name: Run get_clip script
+        env:
+          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
         run: |
           python scripts/get_clip.py "${{ github.event.inputs.streamer }}"
-
-
-
-
-
-
 
 
         
