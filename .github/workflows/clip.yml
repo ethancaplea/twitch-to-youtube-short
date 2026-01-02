@@ -40,4 +40,17 @@ jobs:
         with:
           name: twitch-clip
           path: "*.mp4"
+
+      - name: Convert clip to vertical 9:16
+        run: |
+          INPUT=$(ls *.mp4)
+          OUTPUT="vertical_${INPUT}"
+          ffmpeg -i "$INPUT" -vf "scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2,setsar=1" -c:a copy "$OUTPUT"
+          echo "Converted $INPUT → $OUTPUT"
+
+
+
+
+
+          
         
