@@ -1,15 +1,15 @@
-name: Twitch Clip Finder
+name: Twitch Clip to YouTube Short
 
 on:
   workflow_dispatch:
     inputs:
       streamer:
-        description: "Twitch streamer username (lowercase)"
+        description: "Twitch streamer username"
         required: true
         default: "ibai"
 
 jobs:
-  find-clip:
+  process-clip:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests yt-dlp
+          pip install requests yt-dlp openai-whisper
           sudo apt-get update
           sudo apt-get install -y ffmpeg
 
@@ -35,12 +35,6 @@ jobs:
         run: |
           python scripts/get_clip.py "${{ github.event.inputs.streamer }}"
 
-      - name: Upload clip as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: twitch-clip
-          path: "*.mp4"
-
       - name: Convert clip to vertical 9:16
         run: |
           INPUT=$(ls *.mp4)
@@ -48,9 +42,15 @@ jobs:
           ffmpeg -i "$INPUT" -vf "scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2,setsar=1" -c:a copy "$OUTPUT"
           echo "Converted $INPUT → $OUTPUT"
 
+      - name: Generate captions (Whisper)
+        run: |
+          INPUT=$(ls vertical_*.mp4)
+          OUTPUT="subtitled_${INPUT}"
+          whisper "$INPUT" --model small --output_format srt --output_dir .
+          echo "Captions generated for $INPUT"
 
-
-
-
-          
-        
+      - name: Upload final vertical clip
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-clip
+          path: "vertical_*.mp4"
