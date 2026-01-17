@@ -77,7 +77,7 @@ import subprocess
 os.makedirs("clips", exist_ok=True)
 
 # Set output path inside the clips folder
-output_file = f"clips/{top_clip['id']}.mp4"
+output_file = "clips/latest_clip.mp4"
 
 print(f"Downloading clip to {output_file}...")
 
