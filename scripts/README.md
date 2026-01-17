@@ -1,1 +1,1 @@
-
+[![Twitch Clip to YouTube Short](https://github.com/ethancaplea/twitch-to-youtube-short/actions/workflows/clip.yml/badge.svg)](https://github.com/ethancaplea/twitch-to-youtube-short/actions/workflows/clip.yml)
