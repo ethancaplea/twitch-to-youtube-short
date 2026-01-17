@@ -55,9 +55,8 @@ jobs:
 
       # 6️ Upload to YouTube
       - name: Upload to YouTube
-        run: |
-          python scripts/upload_youtube.py clips/vertical_clip.mp4
+        run: python scripts/upload_youtube.py clips/vertical_clip.mp4
         env:
-          YOUTUBE_CLIENT_ID: ${{ secrets.JYNXZI_YOUTUBE_CLIENT_ID }}
-          YOUTUBE_CLIENT_SECRET: ${{ secrets.JYNXZI_YOUTUBE_CLIENT_SECRET }}
-          YOUTUBE_REFRESH_TOKEN: ${{ secrets.JYNXZI_YOUTUBE_REFRESH_TOKEN }}
+          JYNXZI_YOUTUBE_CLIENT_ID: ${{ secrets.JYNXZI_YOUTUBE_CLIENT_ID }}
+          JYNXZI_YOUTUBE_CLIENT_SECRET: ${{ secrets.JYNXZI_YOUTUBE_CLIENT_SECRET }}
+          JYNXZI_YOUTUBE_REFRESH_TOKEN: ${{ secrets.JYNXZI_YOUTUBE_REFRESH_TOKEN }}
