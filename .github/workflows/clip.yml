@@ -1,59 +1,52 @@
-name: Twitch Clip to YouTube Short
+name: Twitch Clip to YouTube Shorts
 
 on:
   workflow_dispatch:
     inputs:
       streamer:
-        description: "Twitch streamer username"
+        description: 'Twitch streamer username'
         required: true
-        default: "ibai"
+        default: 'jynxzi'  # default streamer
 
 jobs:
-  clip:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      # 1️⃣ Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
+      # 2️⃣ Set up Python
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
-      - name: Install system dependencies
+      # 3️⃣ Install dependencies
+      - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
+          python -m pip install --upgrade pip
+          pip install requests google-auth-oauthlib google-api-python-client ffmpeg-python
 
-      - name: Install Python dependencies
+      # 4️⃣ Download Twitch clip
+      - name: Download Twitch clip
         run: |
-          pip install requests yt-dlp
-
-      - name: Download most popular Twitch clip
+          python scripts/get_clip.py "${{ github.event.inputs.streamer }}"
         env:
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+
+      # 5️⃣ Convert to vertical 9:16
+      - name: Convert clip to vertical
         run: |
-          python scripts/get_clip.py "${{ github.event.inputs.streamer }}"
+          ffmpeg -i clips/latest_clip.mp4 -vf "scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2" clips/vertical_clip.mp4
 
-      - name: Convert clip to vertical 9:16
+      # 6️⃣ Upload to YouTube
+      - name: Upload to YouTube
         run: |
-          # Pick the first MP4 downloaded
-          ORIGINAL=$(ls *.mp4 | head -n 1)
-          FINAL="vertical_${ORIGINAL}"
-
-          # Force 720x1280 vertical, pad with black if needed
-          ffmpeg -y -i "$ORIGINAL" \
-            -vf "scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2,setsar=1" \
-            -c:a copy "$FINAL"
-
-          # Confirm file exists
-          test -f "$FINAL"
-
-
-      - name: Upload final vertical clip
-        uses: actions/upload-artifact@v4
-        with:
-          name: vertical-short
-          path: "vertical_*.mp4"
+          python scripts/upload_youtube.py clips/vertical_clip.mp4
+        env:
+          YOUTUBE_CLIENT_ID: ${{ secrets.JYNXZI_YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.JYNXZI_YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.JYNXZI_YOUTUBE_REFRESH_TOKEN }}
