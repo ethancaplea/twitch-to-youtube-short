@@ -35,6 +35,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg
 
+      # 3.6 Create clips folder
+      - name: Create clips folder
+        run: |
+          mkdir -p clips
 
       # 4️ Download Twitch clip
       - name: Download Twitch clip
