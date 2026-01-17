@@ -23,11 +23,11 @@ jobs:
         with:
           python-version: '3.10'
 
-      # 3️⃣ Install dependencies
+            # 3️⃣ Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests google-auth-oauthlib google-api-python-client ffmpeg-python
+          pip install requests google-auth-oauthlib google-api-python-client ffmpeg-python yt-dlp
 
       # 4️⃣ Download Twitch clip
       - name: Download Twitch clip
