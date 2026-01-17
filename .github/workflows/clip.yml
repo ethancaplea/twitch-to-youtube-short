@@ -39,14 +39,18 @@ jobs:
 
       - name: Convert clip to vertical 9:16
         run: |
+          # Pick the first MP4 downloaded
           ORIGINAL=$(ls *.mp4 | head -n 1)
           FINAL="vertical_${ORIGINAL}"
 
+          # Force 720x1280 vertical, pad with black if needed
           ffmpeg -y -i "$ORIGINAL" \
             -vf "scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2,setsar=1" \
             -c:a copy "$FINAL"
 
+          # Confirm file exists
           test -f "$FINAL"
+
 
       - name: Upload final vertical clip
         uses: actions/upload-artifact@v4
