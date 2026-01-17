@@ -70,11 +70,16 @@ print(f"Views: {top_clip['view_count']}")
 print(f"URL: {top_clip['url']}")
 
 # --- Download clip ---
-output_file = f"{top_clip['id']}.mp4"
+import os
+import subprocess
+
+# Make sure the clips folder exists
+os.makedirs("clips", exist_ok=True)
+
+# Set output path inside the clips folder
+output_file = f"clips/{top_clip['id']}.mp4"
 
 print(f"Downloading clip to {output_file}...")
-
-import subprocess
 
 # Use yt-dlp to download the Twitch clip MP4
 subprocess.run([
