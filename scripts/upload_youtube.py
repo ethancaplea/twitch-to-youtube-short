@@ -24,14 +24,6 @@ CLIENT_ID = os.environ.get("JYNXZI_YOUTUBE_CLIENT_ID")
 CLIENT_SECRET = os.environ.get("JYNXZI_YOUTUBE_CLIENT_SECRET")
 REFRESH_TOKEN = os.environ.get("JYNXZI_YOUTUBE_REFRESH_TOKEN")
 
-# --------------------------
-# Logging for debugging
-# --------------------------
-print("Secrets debug (full values):")
-print("CLIENT_ID:", CLIENT_ID)
-print("CLIENT_SECRET:", CLIENT_SECRET)
-print("REFRESH_TOKEN:", REFRESH_TOKEN)
-
 if not all([CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN]):
     print("Error: Missing one of the required YouTube secrets.")
     sys.exit(1)
