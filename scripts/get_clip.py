@@ -104,13 +104,13 @@ os.makedirs("clips", exist_ok=True)
 
 output_file = f"clips/{filename_title}-{filename_game}.mp4"
 
-print(f"Downloading clip to {raw_clip_path}...")
+print(f"Downloading clip to {output_file}...")
 
 # Use yt-dlp to download the Twitch clip MP4
 subprocess.run([
     "yt-dlp",
     "-f", "best",
-    "-o", raw_clip_path,
+    "-o", output_file,
     top_clip["url"]
 ], check=True)
 
