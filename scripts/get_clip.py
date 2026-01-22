@@ -115,7 +115,13 @@ subprocess.run([
 ], check=True)
 
 print("Download complete.")
-print(f"CLIP_PATH: {output_file}")
+print(f"CLIP_PATH: {clip_path}")
+
+github_env = os.environ.get("GITHUB_ENV")
+if github_env:
+    with open(github_env, "a") as f:
+        f.write(f"CLIP_PATH={clip_path}\n")
+
 
 
 
