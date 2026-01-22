@@ -1,6 +1,7 @@
 import sys
 import os
 import requests
+import re
 from datetime import datetime, timedelta
 
 if len(sys.argv) < 2:
@@ -64,6 +65,14 @@ if not clips:
 
 top_clip = max(clips, key=lambda c: c["view_count"])
 
+def safe_filename(name):
+    name = re.sub(r"[^\w\s-]", "", name)
+    name = re.sub(r"\s+", "_", name)
+    return name[:80]
+
+clip_name = safe_filename(top_clip["title"])
+clip_id = top_clip["id"]
+
 print("TOP CLIP FOUND")
 print(f"Title: {top_clip['title']}")
 print(f"Views: {top_clip['view_count']}")
@@ -76,19 +85,18 @@ import subprocess
 # Make sure the clips folder exists
 os.makedirs("clips", exist_ok=True)
 
-# Set output path inside the clips folder
-output_file = "clips/latest_clip.mp4"
+raw_clip_path = f"clips/{clip_name}_{clip_id}.mp4"
 
-print(f"Downloading clip to {output_file}...")
+print(f"Downloading clip to {raw_clip_path}...")
 
 # Use yt-dlp to download the Twitch clip MP4
 subprocess.run([
     "yt-dlp",
     "-f", "best",
-    "-o", output_file,
+    "-o", raw_clip_path,
     top_clip["url"]
 ], check=True)
 
 print("Download complete.")
-
+print("CLIP_PATH:", raw_clip_path)
 
