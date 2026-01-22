@@ -46,13 +46,24 @@ creds = Credentials(
 youtube = build("youtube", "v3", credentials=creds)
 
 # --------------------------
+# Derive YouTube title from filename
+# --------------------------
+filename = os.path.basename(video_file)
+title = os.path.splitext(filename)[0]
+
+# Convert underscores back to spaces for readability
+title = title.replace("_", " ")
+
+print("Final YouTube title:", title)
+
+# --------------------------
 # Upload the video
 # --------------------------
 request = youtube.videos().insert(
     part="snippet,status",
     body={
         "snippet": {
-            "title": os.path.basename(video_file).replace(".mp4", ""),
+            "title": title,
             "description": "Automated upload from Twitch clips",
             "tags": ["Twitch", "Shorts"],
             "categoryId": "20"  # Gaming
