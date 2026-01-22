@@ -4,6 +4,11 @@ import requests
 import re
 from datetime import datetime, timedelta
 
+def safe_filename(text):
+    text = re.sub(r"[^\w\s-]", "", text)
+    text = re.sub(r"\s+", "_", text)
+    return text.strip("_")[:80]
+
 if len(sys.argv) < 2:
     print("No streamer provided")
     sys.exit(1)
@@ -65,18 +70,17 @@ if not clips:
 
 top_clip = max(clips, key=lambda c: c["view_count"])
 
-def safe_filename(name):
-    name = re.sub(r"[^\w\s-]", "", name)
-    name = re.sub(r"\s+", "_", name)
-    return name[:80]
-
-clip_name = safe_filename(top_clip["title"])
-clip_id = top_clip["id"]
+clip_title = top_clip["title"]
+game_name = top_clip["game_name"]
 
 print("TOP CLIP FOUND")
-print(f"Title: {top_clip['title']}")
+print("CLIP_TITLE:", clip_title)
+print("GAME_NAME:", game_name)
 print(f"Views: {top_clip['view_count']}")
 print(f"URL: {top_clip['url']}")
+
+filename_title = safe_filename(clip_title)
+filename_game = safe_filename(game_name)
 
 # --- Download clip ---
 import os
@@ -85,7 +89,7 @@ import subprocess
 # Make sure the clips folder exists
 os.makedirs("clips", exist_ok=True)
 
-raw_clip_path = f"clips/{clip_name}_{clip_id}.mp4"
+output_file = f"clips/{filename_title}-{filename_game}.mp4"
 
 print(f"Downloading clip to {raw_clip_path}...")
 
@@ -98,5 +102,6 @@ subprocess.run([
 ], check=True)
 
 print("Download complete.")
-print("CLIP_PATH:", raw_clip_path)
+print("CLIP_PATH:", output_file)
+
 
