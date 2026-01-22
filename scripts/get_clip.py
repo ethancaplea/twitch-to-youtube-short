@@ -71,7 +71,20 @@ if not clips:
 top_clip = max(clips, key=lambda c: c["view_count"])
 
 clip_title = top_clip["title"]
-game_name = top_clip["game_name"]
+game_id = top_clip.get("game_id")
+
+game_name = "Unknown Game"
+
+if game_id:
+    game_resp = requests.get(
+        "https://api.twitch.tv/helix/games",
+        headers=headers,
+        params={"id": game_id}
+    )
+    game_resp.raise_for_status()
+    games = game_resp.json()["data"]
+    if games:
+        game_name = games[0]["name"]
 
 print("TOP CLIP FOUND")
 print("CLIP_TITLE:", clip_title)
