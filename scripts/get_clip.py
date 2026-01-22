@@ -102,6 +102,7 @@ subprocess.run([
 ], check=True)
 
 print("Download complete.")
-print("CLIP_PATH:", output_file)
+print(f"CLIP_PATH: {output_file}")
+
 
 
