@@ -44,7 +44,8 @@ jobs:
       - name: Download Twitch clip
         id: get_clip
         run: |
-          CLIP_PATH=$(python scripts/get_clip.py "${{ github.event.inputs.streamer }}" | grep CLIP_PATH | cut -d' ' -f2)
+          python scripts/get_clip.py "${{ github.event.inputs.streamer }}"
+          CLIP_PATH=$(grep '^CLIP_PATH:' $GITHUB_STEP_SUMMARY | cut -d' ' -f2-)
           echo "CLIP_PATH=$CLIP_PATH" >> $GITHUB_ENV
         env:
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
@@ -53,10 +54,17 @@ jobs:
       # 5️ Convert to vertical 9:16
       - name: Convert clip to vertical
         run: |
-          mkdir -p clips/vertical
+          echo "CLIP_PATH is: '$CLIP_PATH'"
+          ls -l clips
+      
+          if [ -z "$CLIP_PATH" ]; then
+            echo "ERROR: CLIP_PATH is empty"
+            exit 1
+          fi
+      
           ffmpeg -i "$CLIP_PATH" \
             -vf "scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2" \
-            "clips/vertical/$(basename "$CLIP_PATH")"
+            "$CLIP_PATH"
 
       # 6️ Upload to YouTube
       - name: Upload to YouTube
