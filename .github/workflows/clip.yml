@@ -70,13 +70,18 @@ jobs:
           fi
       
           TEMP_FILE="${CLIP_PATH%.mp4}_vertical.mp4"
+          # Maximum characters per line
+          MAX_CHARS=20
+          
+          # Replace spaces with newlines when the line exceeds MAX_CHARS
+          HEADER_WRAPPED=$(echo "$HEADER_TEXT" | fold -s -w $MAX_CHARS)
       
           ffmpeg -y -i "$CLIP_PATH" \
             -vf "
               scale=720:1280:force_original_aspect_ratio=decrease,
               pad=720:1280:(ow-iw)/2:(oh-ih)/2:color=black,
-              drawtext=text='${HEADER_TEXT}':fontcolor=white:fontsize=56:x=(w-text_w)/2:y=300:box=1:boxcolor=black@0.5:boxborderw=12,
-              drawtext=text='@${STREAMER_NAME}':fontcolor=white:fontsize=42:x=(w-text_w)/2:y=h-300
+              drawtext=text='HEADER_WRAPPED':fontcolor=white:fontsize=56:x=(w-text_w)/2:y=300:box=1:boxcolor=black@0.5:boxborderw=12,
+              drawtext=text='@${STREAMER_NAME}':fontcolor=white:fontsize=42:x=(w-text_w)/2:y=h-300:rotate=-0.35
             " \
             -c:a copy \
             "$TEMP_FILE"
