@@ -60,9 +60,13 @@ jobs:
             exit 1
           fi
       
-          ffmpeg -i "$CLIP_PATH" \
+          TEMP_FILE="${CLIP_PATH%.mp4}_vertical.mp4"
+      
+          ffmpeg -y -i "$CLIP_PATH" \
             -vf "scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2" \
-            "$CLIP_PATH"
+            "$TEMP_FILE"
+      
+          mv "$TEMP_FILE" "$CLIP_PATH"
 
       # 6️ Upload to YouTube
       - name: Upload to YouTube
