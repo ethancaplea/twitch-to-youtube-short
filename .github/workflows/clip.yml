@@ -71,7 +71,7 @@ jobs:
       # 6️ Upload to YouTube
       - name: Upload to YouTube
         run: |
-          python scripts/upload_youtube.py "clips/vertical/$(basename "$CLIP_PATH")"
+          python scripts/upload_youtube.py "clips/$(basename "$CLIP_PATH")"
         env:
           JYNXZI_YOUTUBE_CLIENT_ID: ${{ secrets.JYNXZI_YOUTUBE_CLIENT_ID }}
           JYNXZI_YOUTUBE_CLIENT_SECRET: ${{ secrets.JYNXZI_YOUTUBE_CLIENT_SECRET }}
