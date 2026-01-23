@@ -7,6 +7,11 @@ on:
         description: 'Twitch streamer username'
         required: true
         default: 'jynxzi'  # default streamer
+        
+      header_text:
+        description: 'Top text shown above the video (Shorts hook)'
+        required: true
+        default: 'We Post Jynxzi Clip Everyday'  # default header text
 
 jobs:
   build:
@@ -51,8 +56,12 @@ jobs:
 
       # 5️ Convert to vertical 9:16
       - name: Convert clip to vertical
+        env:
+          HEADER_TEXT: ${{ github.event.inputs.header_text }}
+          STREAMER_NAME: ${{ github.event.inputs.streamer }}
         run: |
           echo "CLIP_PATH is: '$CLIP_PATH'"
+
           ls -l clips
       
           if [ -z "$CLIP_PATH" ]; then
@@ -63,7 +72,13 @@ jobs:
           TEMP_FILE="${CLIP_PATH%.mp4}_vertical.mp4"
       
           ffmpeg -y -i "$CLIP_PATH" \
-            -vf "scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2" \
+            -vf "
+              scale=720:1280:force_original_aspect_ratio=decrease,
+              pad=720:1280:(ow-iw)/2:(oh-ih)/2:color=black,
+              drawtext=text='${HEADER_TEXT}':fontcolor=white:fontsize=56:x=(w-text_w)/2:y=40:box=1:boxcolor=black@0.5:boxborderw=12,
+              drawtext=text='@${STREAMER_NAME}':fontcolor=white:fontsize=42:x=(w-text_w)/2:y=h-100
+            " \
+            -c:a copy \
             "$TEMP_FILE"
       
           mv "$TEMP_FILE" "$CLIP_PATH"
