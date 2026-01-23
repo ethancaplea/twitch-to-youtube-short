@@ -59,15 +59,13 @@ jobs:
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
 
-      # 5️ Convert to vertical 9:16
-      - name: Convert clip to vertical
+      # 5️ Convert clip to vertical with blurred background
+      - name: Convert clip to vertical with blurred background
         env:
           HEADER_TEXT: ${{ github.event.inputs.header_text }}
           STREAMER_NAME: ${{ github.event.inputs.streamer }}
         run: |
           echo "CLIP_PATH is: '$CLIP_PATH'"
-
-          ls -l clips
       
           if [ -z "$CLIP_PATH" ]; then
             echo "ERROR: CLIP_PATH is empty"
@@ -75,24 +73,17 @@ jobs:
           fi
       
           TEMP_FILE="${CLIP_PATH%.mp4}_vertical.mp4"
-          # Maximum characters per line
-          MAX_CHARS=20
-          
-          # Replace spaces with newlines when the line exceeds MAX_CHARS
-          HEADER_WRAPPED=$(echo "$HEADER_TEXT" | fold -s -w $MAX_CHARS)
       
-          ffmpeg -y -i "$CLIP_PATH" \
-            -vf "
-              scale=720:1280:force_original_aspect_ratio=decrease,
-              pad=720:1280:(ow-iw)/2:(oh-ih)/2:color=black,
-              drawtext=text='$HEADER_WRAPPED':fontcolor=white:fontsize=56:x=(w-text_w)/2:y=250:box=1:boxcolor=black@0.5:boxborderw=12,
-              drawtext=text='@${STREAMER_NAME}':fontcolor=white:fontsize=56:x=(w-text_w)/2:y=h-400
-            " \
-            -c:a copy \
-            "$TEMP_FILE"
-
+          ffmpeg -y -i "$CLIP_PATH" -filter_complex "\
+          [0:v]scale=720:1280:force_original_aspect_ratio=decrease,pad=720:1280:(ow-iw)/2:(oh-ih)/2[v]; \
+          [0:v]scale=720:1280,boxblur=luma_radius=20:luma_power=2[bg]; \
+          [bg][v]overlay=(W-w)/2:(H-h)/2, \
+          drawtext=text='${HEADER_TEXT}':fontcolor=white:fontsize=40:x=(w-text_w)/2:y=50, \
+          drawtext=text='@${STREAMER_NAME}':fontcolor=white:fontsize=36:x=(w-text_w)/2:y=1200" \
+          "$TEMP_FILE"
       
           mv "$TEMP_FILE" "$CLIP_PATH"
+
 
       # 6️ Upload to YouTube
       - name: Upload to YouTube
