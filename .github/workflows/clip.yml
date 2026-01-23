@@ -12,6 +12,11 @@ on:
         description: 'Top text shown above the video (Shorts hook)'
         required: true
         default: 'We Post Jynxzi Clip Everyday'  # default header text
+      
+      Description:
+        description: 'Youtube description (should include hashtags)'
+        required: true
+        default: '#jynxzi #shorts #jiddler'  # default header text
 
 jobs:
   build:
@@ -97,3 +102,4 @@ jobs:
           JYNXZI_YOUTUBE_CLIENT_ID: ${{ secrets.JYNXZI_YOUTUBE_CLIENT_ID }}
           JYNXZI_YOUTUBE_CLIENT_SECRET: ${{ secrets.JYNXZI_YOUTUBE_CLIENT_SECRET }}
           JYNXZI_YOUTUBE_REFRESH_TOKEN: ${{ secrets.JYNXZI_YOUTUBE_REFRESH_TOKEN }}
+          YT_DESCRIPTION: ${{ github.event.inputs.description }}
