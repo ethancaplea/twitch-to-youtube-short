@@ -23,6 +23,7 @@ if not os.path.exists(video_file):
 CLIENT_ID = os.environ.get("JYNXZI_YOUTUBE_CLIENT_ID")
 CLIENT_SECRET = os.environ.get("JYNXZI_YOUTUBE_CLIENT_SECRET")
 REFRESH_TOKEN = os.environ.get("JYNXZI_YOUTUBE_REFRESH_TOKEN")
+YT_DESCRIPTION = os.environ.get("YT_DESCRIPTION", "Automated upload from Twitch clips")
 
 if not all([CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN]):
     print("Error: Missing one of the required YouTube secrets.")
@@ -64,8 +65,8 @@ request = youtube.videos().insert(
     body={
         "snippet": {
             "title": title,
-            "description": "Automated upload from Twitch clips",
-            "tags": ["Twitch", "Shorts"],
+            "description": YT_DESCRIPTION,
+            "tags": ["Twitch", "Shorts", "jynxzi"],
             "categoryId": "20"  # Gaming
         },
         "status": {
