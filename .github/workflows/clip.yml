@@ -45,8 +45,6 @@ jobs:
         id: get_clip
         run: |
           python scripts/get_clip.py "${{ github.event.inputs.streamer }}"
-          CLIP_PATH=$(grep '^CLIP_PATH:' $GITHUB_STEP_SUMMARY | cut -d' ' -f2-)
-          echo "CLIP_PATH=$CLIP_PATH" >> $GITHUB_ENV
         env:
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
